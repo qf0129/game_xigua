@@ -40,6 +40,10 @@ export default class Event {
     if (!db.isGameOver) {
       switch (e_name) {
         case 'touchstart':
+          // var obj = wx.createInnerAudioContext()
+          // obj.path = 'https://qn.1eoo.com/test/audio/audio1.mp3'
+          // console.log(obj)
+          // obj.play()
           break;
         case 'touchmove':
           if (!db.cur_item) {

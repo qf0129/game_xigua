@@ -4,6 +4,7 @@ export default class Database {
   }
 
   reset() {
+    this.res = {}
     this.world = null
     this.engine = null
     this.cur_item = null
