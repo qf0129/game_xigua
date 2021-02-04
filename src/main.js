@@ -13,9 +13,8 @@ export default class Main {
   }
   
   _init_bodies(){
-    Matter.World.add(db.world, new Border().get_borders());
-    db.cur_item = Item.get()
-    Matter.World.add(db.world, db.cur_item);
+    Border.create()
+    Item.create()
   }
   
   _init_event(){
@@ -28,13 +27,14 @@ export default class Main {
     let engine = Matter.Engine.create()
     db.engine = engine
     db.world = engine.world
+    db.world.gravity.y = 2
     let render = Matter.Render.create({
       canvas: canvas,
       engine: engine,
       options: {
         height: canvas.height,
         width: canvas.width,
-        wireframes: true,
+        wireframes: false,
         showAngleIndicator: false,
         background: '#666',
       }
