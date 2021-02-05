@@ -11,10 +11,12 @@ export default class Item {
     var isStatic = typeof options.isStatic !== 'undefined' ? options.isStatic : true
     var isCurrent = typeof options.isCurrent !== 'undefined' ? options.isCurrent : true
 
-    let item = this.create_circle(x, y, level)
+    let item = this.create_img_circle(x, y, level)
+    // let item = this.create_circle(x, y, level)
     Matter.World.add(db.world, item)
     if (isStatic) Matter.Body.setStatic(item, true)
     if (isCurrent) db.cur_item = item
+    console.log(item)
     return this
   }
 
@@ -24,14 +26,36 @@ export default class Item {
       y: (pos1.y + pos2.y) / 2
     }
   }
-
-  static create_circle(x, y, level) {
-    var radius = this.radius * level;
+  static create_img_circle(x, y, level) {
+    if (level > 8) level = 8
+    let img = db.img.get('item'+ level)
+    let radius = img.width/2;
     return Matter.Bodies.circle(x, y, radius, {
       level: level,
-      frictionAir: 0.06,
       friction: 0.01,
-      mass: 0,
+      frictionAir: 0.01,
+      frictionStatic: 0.1,
+      density: 0.01,
+      restitution: 0.001,
+      render: {
+        visible: true,
+        sprite: {
+          texture: 'img/item'+level+'.png'
+        }
+      }
+    });
+
+  }
+
+  static create_circle(x, y, level) {
+    var radius = this.radius * level * 1.3;
+    return Matter.Bodies.circle(x, y, radius, {
+      level: level,
+      friction: 0.01,
+      frictionAir: 0.01,
+      frictionStatic: 0.1,
+      density: 0.01,
+      restitution: 0.001
     });
   }
 

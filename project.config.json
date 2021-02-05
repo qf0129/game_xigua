@@ -20,7 +20,7 @@
     "compileHotReLoad": false,
     "useMultiFrameRuntime": true,
     "useApiHook": true,
-    "useApiHostProcess": true,
+    "useApiHostProcess": false,
     "babelSetting": {
       "ignore": [],
       "disablePlugins": [],
@@ -37,8 +37,8 @@
     "minifyWXSS": true
   },
   "compileType": "game",
-  "libVersion": "1.9.94",
-  "appid": "wxe8e2467692befb9c",
+  "libVersion": "2.15.0",
+  "appid": "wx9081675199b6a9c4",
   "projectname": "game_xigua",
   "condition": {
     "search": {
