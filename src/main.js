@@ -44,7 +44,6 @@ export default class Main {
         height: canvas.height,
         width: canvas.width,
         wireframes: false,
-        showAngleIndicator: false,
         background: 'res/bg.png',
       }
     });

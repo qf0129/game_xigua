@@ -1,6 +1,6 @@
 import './lib/weapp-adapter'
 
-GameGlobal.log = function(obj){console.log(obj)}
+GameGlobal.log = function(...obj){console.log('##',...obj)}
 
 GameGlobal.Matter = require('lib/matter.js')
 

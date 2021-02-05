@@ -18,14 +18,14 @@ export default class ScoreBar {
       }
     })
     Matter.World.add(db.world, score_bar)
-
+    log(1,db.context)
     
+    db.context.globalAlpha = 1;
     db.context.textBaseline = "middle";
     db.context.textAlign = "center";
-    db.context.fillStyle = 'yellow';
-    db.context.font = '14px Arial';                    
-    db.context.fillText('1234', Border.size + this.w/2, Border.size + this.h/2, 100);
-
+    db.context.fillStyle = '#ff66aa';
+    db.context.font = '20px Arial';                    
+    db.context.fillText('ABCD', 100,100, 100);
 
   }
 

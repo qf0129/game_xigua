@@ -4,16 +4,17 @@ import Border from 'body/border'
 export default class Event {
   constructor() {
     this.new_x = 0
+    this.playedBoom = false
   }
   register_item_event() {
     canvas.addEventListener('touchstart', e => {
-      db.music.playBoom()
       this._handle_event('touchstart', e)
     })
     canvas.addEventListener('touchmove', e => {
       this._handle_event('touchmove', e)
     })
     canvas.addEventListener('touchend', e => {
+      this.playedBoom = false
       this._handle_event('touchend', e)
     })
   }
@@ -25,8 +26,8 @@ export default class Event {
         let body_a = pairs.bodyA
         let body_b = pairs.bodyB
         if (body_a.label == body_b.label && body_a.level == body_b.level) {
-          console.log('remove')
           if (canMerge) {
+            db.music.playBoom()
             canMerge = false
             let { x, y } = Item.git_middle_pos(body_a.position, body_a.position)
             Matter.World.remove(db.world, body_a)
@@ -48,17 +49,12 @@ export default class Event {
     if (!db.isGameOver) {
       switch (e_name) {
         case 'touchstart':
-          // var obj = wx.createInnerAudioContext()
-          // obj.path = 'https://qn.1eoo.com/test/audio/audio1.mp3'
-          // console.log(obj)
-          // obj.play()
           break;
         case 'touchmove':
           if (!db.cur_item) {
             return
           }
           this.new_x = e.touches[0].clientX
-          console.log(canvas.width, db.cur_item.circleRadius, Border.size)
           if (this.new_x < db.cur_item.circleRadius + Border.size) {
             return
           }
