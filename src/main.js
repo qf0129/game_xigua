@@ -1,9 +1,7 @@
 import Item from 'body/item'
 import Border from 'body/border'
-import ScoreBar from 'body/score_bar'
 import Event from 'event'
 import ImgLoader from 'base/img_loader'
-import Score from 'base/score'
 import Music from 'base/music'
 
 
@@ -22,13 +20,13 @@ export default class Main {
   _init_bodies() {
     Border.create()
     Item.create()
-    ScoreBar.init()
   }
 
   _init_event() {
     let event = new Event()
     event.register_item_event()
     event.register_collision_event()
+    event.register_render_event()
   }
 
   _init_engine() {
@@ -44,22 +42,19 @@ export default class Main {
         height: canvas.height,
         width: canvas.width,
         wireframes: false,
-        background: 'res/bg.png',
+        background: '#fff',
+        showSleeping: false,
       }
     });
-    Matter.Render.run(render);
-    Matter.Runner.run(Matter.Runner.create(), engine);
-    // Matter.Engine.run(engine);
+    db.render = render
     db.context = render.context
 
-    log(render)
-    log(render.context)
-    
-    render.context.font = "48px serif";
-    render.context.textBaseline = "hanging";
-    render.context.strokeText("Hello world", 100, 300);
-    render.context.fillText(`XXX`, 100, 200)
-    
-  }
+    Matter.Engine.run(engine);
+    Matter.Render.run(render);
 
+    Matter.Render.lookAt(render, {
+      min: { x: 0, y: 0 },
+      max: { x: canvas.width, y: canvas.height }
+    })
+  }
 }

@@ -1,14 +1,15 @@
-export default class Store {
-  static x = 100
-  static y = 30
+import Border from '../body/border'
 
-  static init() {
-    db.context.font = '25px Arial'
-    db.context.fillStyle = '#52ff0a'
-    db.context.fillText(`分数 0`, this.x, this.y)
+export default class Score {
+  
+  static show(){
+    db.context.font = "22px Arial";
+    db.context.textBaseline = "hanging";
+    db.context.fillStyle = '#eee';
+    db.context.fillText("分数：" + db.score, Border.size + 10, Border.size + 50);
   }
-  static add(number) {
-    db.score += number
-    db.context.fillText(`分数 ${db.score}`, this.x, this.y)
+
+  static add(score) {
+    db.score += score
   }
 }

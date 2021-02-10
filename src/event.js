@@ -1,5 +1,6 @@
 import Item from 'body/item'
 import Border from 'body/border'
+import Score from 'base/score'
 
 export default class Event {
   constructor() {
@@ -17,6 +18,16 @@ export default class Event {
       this.playedBoom = false
       this._handle_event('touchend', e)
     })
+  }
+  register_render_event() {
+    Matter.Events.on(db.render, 'beforeRender', e => {
+      db.render.context.drawImage(db.img.get('bg'), 0, 0, canvas.width, canvas.height)
+      // db.context.fillStyle = "#222"
+      // db.context.fillRect(0, 0 , canvas.width, canvas.height)
+    });
+    Matter.Events.on(db.render, 'afterRender', e => {
+      Score.show()
+    });
   }
   register_collision_event() {
     Matter.Events.on(db.engine, 'collisionStart', function (event) {
@@ -42,42 +53,37 @@ export default class Event {
             db.add_score(body_a.level)
           }
         }
+
       }
     });
   }
   _handle_event(e_name, e) {
     if (!db.isGameOver) {
-      switch (e_name) {
-        case 'touchstart':
-          break;
-        case 'touchmove':
-          if (!db.cur_item) {
-            return
-          }
-          this.new_x = e.touches[0].clientX
-          if (this.new_x < db.cur_item.circleRadius + Border.size) {
-            return
-          }
-          if (this.new_x > canvas.width - db.cur_item.circleRadius - Border.size) {
-            return
-          }
-          Matter.Body.setPosition(db.cur_item, {
-            x: this.new_x,
-            y: Item.default_y
-          })
-          break;
-        case 'touchend':
-          if (!db.cur_item) {
-            return
-          }
-          Matter.Body.setStatic(db.cur_item, false)
-          db.cur_item = null
-          setTimeout(function () {
-            Item.create()
-          }, 800)
-          break;
-        default:
-          break;
+      if (e_name == 'touchstart' || e_name == 'touchmove') {
+        if (!db.cur_item) {
+          return
+        }
+        this.new_x = e.touches[0].clientX
+        if (this.new_x < db.cur_item.circleRadius + Border.size) {
+          this.new_x = db.cur_item.circleRadius + Border.size
+        }
+        if (this.new_x > canvas.width - db.cur_item.circleRadius - Border.size) {
+          this.new_x = canvas.width - db.cur_item.circleRadius - Border.size
+        }
+        Matter.Body.setPosition(db.cur_item, {
+          x: this.new_x,
+          y: Item.default_y
+        })
+      }
+      if (e_name == 'touchend') {
+        if (!db.cur_item) {
+          return
+        }
+        Matter.Body.setStatic(db.cur_item, false)
+        db.cur_item = null
+        setTimeout(function () {
+          Item.create()
+        }, 800)
       }
     }
   }

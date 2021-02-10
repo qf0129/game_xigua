@@ -1,6 +1,6 @@
 
 export default class Border {
-  static size = 30
+  static size = 2
   static w = canvas.width
   static h = canvas.height
 

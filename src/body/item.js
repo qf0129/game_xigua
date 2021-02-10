@@ -7,7 +7,7 @@ export default class Item {
     if (!options) options = {}
     var x = options.x || this.default_x
     var y = options.y || this.default_y
-    var level = options.level || Matter.Common.choose([1, 2, 3, 4, 5, 6])
+    var level = options.level || Matter.Common.choose([1,2,3])
     var isStatic = typeof options.isStatic !== 'undefined' ? options.isStatic : true
     var isCurrent = typeof options.isCurrent !== 'undefined' ? options.isCurrent : true
 
@@ -16,7 +16,6 @@ export default class Item {
     Matter.World.add(db.world, item)
     if (isStatic) Matter.Body.setStatic(item, true)
     if (isCurrent) db.cur_item = item
-    console.log(item)
     return this
   }
 
@@ -27,16 +26,16 @@ export default class Item {
     }
   }
   static create_img_circle(x, y, level) {
-    if (level > 8) level = 8
+    if (level > 10) level = 10
     let img = db.img.get('item'+ level)
     let radius = img.width/2;
     return Matter.Bodies.circle(x, y, radius, {
       level: level,
+      frictionAir: 0.06,
+      restitution: 0.3,
       friction: 0.01,
-      frictionAir: 0.01,
-      frictionStatic: 0.1,
+      frictionStatic: 1,
       density: 0.01,
-      restitution: 0.001,
       render: {
         visible: true,
         sprite: {
