@@ -4,6 +4,7 @@ export default class Item {
   static default_y = 100
 
   static create(options) {
+    if (db.isGameOver) return
     if (!options) options = {}
     var x = options.x || this.default_x
     var y = options.y || this.default_y
@@ -30,6 +31,7 @@ export default class Item {
     let img = db.img.get('item'+ level)
     let radius = img.width/2;
     return Matter.Bodies.circle(x, y, radius, {
+      is_item:true,
       level: level,
       // frictionAir: 0.9,
       restitution: 0.001,

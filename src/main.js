@@ -29,12 +29,8 @@ export default class Main {
   }
 
   _init_engine() {
-    let engine = Matter.Engine.create()
-    db.engine = engine
-    db.world = engine.world
-    db.world.gravity.y = 4
-    
-    let render = Matter.Render.create({
+    const engine = Matter.Engine.create()
+    const render = Matter.Render.create({
       canvas: canvas,
       engine: engine,
       options: {
@@ -45,15 +41,31 @@ export default class Main {
         showSleeping: false,
       }
     });
+    const mouse = Matter.Mouse.create(canvas)
+    const mouseConstraint = Matter.MouseConstraint.create(engine, {
+      mouse: mouse,
+      constraint: {
+          stiffness: 0,
+          render: {
+              visible: false
+          }
+      }
+    })
+    db.mouseConstraint = mouseConstraint
+    Matter.World.add(engine.world, mouseConstraint)
+    engine.world.gravity.y = 3
+
+    db.engine = engine
+    db.world = engine.world
     db.render = render
     db.context = render.context
 
     Matter.Engine.run(engine);
     Matter.Render.run(render);
 
-    Matter.Render.lookAt(render, {
-      min: { x: 0, y: 0 },
-      max: { x: canvas.width, y: canvas.height }
-    })
+    // Matter.Render.lookAt(render, {
+    //   min: { x: 0, y: 0 },
+    //   max: { x: canvas.width, y: canvas.height }
+    // })
   }
 }

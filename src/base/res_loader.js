@@ -15,7 +15,6 @@ export default class ResLoader {
             db.res[name] = obj
           }
         }
-        log('width:' + obj.width + ',height:' + obj.height)
 
       } else {
         obj = wx.createInnerAudioContext()

@@ -4,19 +4,19 @@ import End from 'base/end'
 
 export default class Event {
   static new_x = 0
-  static gameover_y = 500
+  static gameover_y = 200
+  // static gameover_y = canvas.height-100
   static playedBoom = false
+  static press_item = false
   // static first_collision = false
 
-  static remove_all_event() {
-    canvas.removeEventListener('touchstart', this._handle_event)
-    canvas.removeEventListener('touchmove', this._handle_event)
-    canvas.removeEventListener('touchend', this._handle_event)
-  }
-    static register_item_event() {
-      canvas.addEventListener('touchstart', this._handle_event)
-      canvas.addEventListener('touchmove', this._handle_event)
-      canvas.addEventListener('touchend', this._handle_event)
+  static register_item_event() {
+    Matter.Events.on(db.mouseConstraint, 'mousedown', this._handle_event)
+    Matter.Events.on(db.mouseConstraint, 'mousemove', this._handle_event)
+    Matter.Events.on(db.mouseConstraint, 'mouseup', this._handle_event)
+    Matter.Events.on(db.render, 'restart', e => {
+      End.hide()
+    })
   }
   static register_render_event() {
     Matter.Events.on(db.render, 'beforeRender', e => {
@@ -49,21 +49,21 @@ export default class Event {
               isStatic: false,
               isCurrent: false
             })
-            db.add_score(body_a.level)
+            db.add_score(body_a.level*2)
           }
         }
       }
     });
   }
-  static _check_gameover() {
-    if (db.cur_item.position.y < this.gameover_y) {
-      log('game over')
+  static _check_gameover(item) {
+    if (!db.isGameOver && item.position.y < this.gameover_y) {
+      db.isGameOver = true
       End.show()
+      log('game over')
     }
   }
 
   static _make_static() {
-    log(Matter.Composite.allBodies(db.world))
     Matter.Composite.allBodies(db.world).forEach(body => {
       if (!body.isStatic) {
         Matter.Body.setStatic(body, true)
@@ -73,11 +73,12 @@ export default class Event {
 
   static _handle_event(e) {
     if (!db.isGameOver) {
-      if (e.type == 'touchstart' || e.type == 'touchmove') {
+      if (e.name == 'mousedown' || e.name == 'mousemove') {
         if (!db.cur_item) {
           return
         }
-        this.new_x = e.touches[0].clientX
+        this.press_item = true
+        this.new_x = e.mouse.absolute.x
         if (this.new_x < db.cur_item.circleRadius) {
           this.new_x = db.cur_item.circleRadius
         }
@@ -89,16 +90,29 @@ export default class Event {
           y: Item.default_y
         })
       }
-      if (e.type == 'touchend') {
-        if (!db.cur_item) {
+      if (e.name == 'mouseup') {
+        if (!db.cur_item || !this.press_item) {
           return
         }
+        const _item = db.cur_item
         Matter.Body.setStatic(db.cur_item, false)
+        db.cur_item = null
+        this.press_item = false
         setTimeout(function () {
-          Event._check_gameover()
-          db.cur_item = null
+          Event._check_gameover(_item)
           Item.create()
-        }, 1000)
+        }, 1500)
+      }
+    } else {
+      if (e.name == 'mousedown') {
+        for (let i = 0; i < Matter.Composite.allBodies(db.world).length; i++) {
+          const body = Matter.Composite.allBodies(db.world)[i];
+          if (Matter.Bounds.contains(body.bounds, e.mouse.position)) {
+            if (body.event_name) {
+              Matter.Events.trigger(db.render, body.event_name, e)
+            }
+          }
+        }
       }
     }
   }

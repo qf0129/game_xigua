@@ -6,7 +6,13 @@ export default class Database {
   }
 
   reset() {
+    this.score = 0
+    this.isGameOver = false
+  }
+
+  init() {
     this.res = {}
+    this.btns = []
     this.world = null
     this.render = null
     this.engine = null
