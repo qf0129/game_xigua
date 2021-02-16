@@ -31,11 +31,11 @@ export default class Item {
     let radius = img.width/2;
     return Matter.Bodies.circle(x, y, radius, {
       level: level,
-      frictionAir: 0.06,
-      restitution: 0.3,
-      friction: 0.01,
-      frictionStatic: 1,
-      density: 0.01,
+      // frictionAir: 0.9,
+      restitution: 0.001,
+      friction: 0.5,
+      frictionStatic: 9,
+      density: 0.1,
       render: {
         visible: true,
         sprite: {

@@ -1,36 +1,35 @@
 import Item from 'body/item'
-import Border from 'body/border'
 import Score from 'base/score'
+import End from 'base/end'
 
 export default class Event {
-  constructor() {
-    this.new_x = 0
-    this.playedBoom = false
+  static new_x = 0
+  static gameover_y = 500
+  static playedBoom = false
+  // static first_collision = false
+
+  static remove_all_event() {
+    canvas.removeEventListener('touchstart', this._handle_event)
+    canvas.removeEventListener('touchmove', this._handle_event)
+    canvas.removeEventListener('touchend', this._handle_event)
   }
-  register_item_event() {
-    canvas.addEventListener('touchstart', e => {
-      this._handle_event('touchstart', e)
-    })
-    canvas.addEventListener('touchmove', e => {
-      this._handle_event('touchmove', e)
-    })
-    canvas.addEventListener('touchend', e => {
-      this.playedBoom = false
-      this._handle_event('touchend', e)
-    })
+    static register_item_event() {
+      canvas.addEventListener('touchstart', this._handle_event)
+      canvas.addEventListener('touchmove', this._handle_event)
+      canvas.addEventListener('touchend', this._handle_event)
   }
-  register_render_event() {
+  static register_render_event() {
     Matter.Events.on(db.render, 'beforeRender', e => {
       db.render.context.drawImage(db.img.get('bg'), 0, 0, canvas.width, canvas.height)
-      // db.context.fillStyle = "#222"
-      // db.context.fillRect(0, 0 , canvas.width, canvas.height)
+      db.context.fillStyle = "#f33"
+      db.context.fillRect(canvas.width - 20, this.gameover_y, 20, 2)
     });
     Matter.Events.on(db.render, 'afterRender', e => {
       Score.show()
     });
   }
-  register_collision_event() {
-    Matter.Events.on(db.engine, 'collisionStart', function (event) {
+  static register_collision_event() {
+    Matter.Events.on(db.engine, 'collisionStart', event => {
       var pairs_list = event.pairs
       var canMerge = true
       for (let pairs of pairs_list) {
@@ -53,37 +52,53 @@ export default class Event {
             db.add_score(body_a.level)
           }
         }
-
       }
     });
   }
-  _handle_event(e_name, e) {
+  static _check_gameover() {
+    if (db.cur_item.position.y < this.gameover_y) {
+      log('game over')
+      End.show()
+    }
+  }
+
+  static _make_static() {
+    log(Matter.Composite.allBodies(db.world))
+    Matter.Composite.allBodies(db.world).forEach(body => {
+      if (!body.isStatic) {
+        Matter.Body.setStatic(body, true)
+      }
+    });
+  }
+
+  static _handle_event(e) {
     if (!db.isGameOver) {
-      if (e_name == 'touchstart' || e_name == 'touchmove') {
+      if (e.type == 'touchstart' || e.type == 'touchmove') {
         if (!db.cur_item) {
           return
         }
         this.new_x = e.touches[0].clientX
-        if (this.new_x < db.cur_item.circleRadius + Border.size) {
-          this.new_x = db.cur_item.circleRadius + Border.size
+        if (this.new_x < db.cur_item.circleRadius) {
+          this.new_x = db.cur_item.circleRadius
         }
-        if (this.new_x > canvas.width - db.cur_item.circleRadius - Border.size) {
-          this.new_x = canvas.width - db.cur_item.circleRadius - Border.size
+        if (this.new_x > canvas.width - db.cur_item.circleRadius) {
+          this.new_x = canvas.width - db.cur_item.circleRadius
         }
         Matter.Body.setPosition(db.cur_item, {
           x: this.new_x,
           y: Item.default_y
         })
       }
-      if (e_name == 'touchend') {
+      if (e.type == 'touchend') {
         if (!db.cur_item) {
           return
         }
         Matter.Body.setStatic(db.cur_item, false)
-        db.cur_item = null
         setTimeout(function () {
+          Event._check_gameover()
+          db.cur_item = null
           Item.create()
-        }, 800)
+        }, 1000)
       }
     }
   }

@@ -4,6 +4,7 @@ export default class ImgLoader {
 
     this.map = new Map([
       ['bg', 'img/bg.png'],
+      ['ground', 'img/ground.png'],
       ['ball', 'img/ball.png'],
       ['item1', 'img/item1.png'],
       ['item2', 'img/item2.png'],

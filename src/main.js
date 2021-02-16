@@ -23,10 +23,9 @@ export default class Main {
   }
 
   _init_event() {
-    let event = new Event()
-    event.register_item_event()
-    event.register_collision_event()
-    event.register_render_event()
+    Event.register_item_event()
+    Event.register_collision_event()
+    Event.register_render_event()
   }
 
   _init_engine() {
