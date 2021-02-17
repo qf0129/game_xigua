@@ -34,10 +34,10 @@ export default class Item {
       is_item:true,
       level: level,
       // frictionAir: 0.9,
-      restitution: 0.001,
+      restitution: 0.0001,
       friction: 0.5,
       frictionStatic: 9,
-      density: 0.1,
+      density: 0.1 * level,
       render: {
         visible: true,
         sprite: {

@@ -6,7 +6,8 @@ export default class Score {
     db.context.font = "25px Arial";
     db.context.textBaseline = "hanging";
     db.context.fillStyle = '#222';
-    db.context.fillText(db.score, 20, 50);
+    const score_x = db.score > 999 ? 50 : 25
+    db.context.fillText(db.score, score_x, 50);
   }
 
   static add(score) {

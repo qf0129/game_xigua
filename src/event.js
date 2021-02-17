@@ -4,11 +4,10 @@ import End from 'base/end'
 
 export default class Event {
   static new_x = 0
-  static gameover_y = 200
+  static gameover_y = 180
   // static gameover_y = canvas.height-100
   static playedBoom = false
   static press_item = false
-  // static first_collision = false
 
   static register_item_event() {
     Matter.Events.on(db.mouseConstraint, 'mousedown', this._handle_event)
@@ -32,12 +31,14 @@ export default class Event {
     Matter.Events.on(db.engine, 'collisionStart', event => {
       var pairs_list = event.pairs
       var canMerge = true
+      let merged = false
       for (let pairs of pairs_list) {
         let body_a = pairs.bodyA
         let body_b = pairs.bodyB
         if (body_a.label == body_b.label && body_a.level == body_b.level) {
           if (canMerge) {
             db.music.playBoom()
+            merged = true
             canMerge = false
             let { x, y } = Item.git_middle_pos(body_a.position, body_a.position)
             Matter.World.remove(db.world, body_a)
@@ -52,6 +53,10 @@ export default class Event {
             db.add_score(body_a.level*2)
           }
         }
+      }
+      if(!merged&&!db.played_merge){
+        db.music.playMerge()
+        db.played_merge = true
       }
     });
   }
@@ -95,6 +100,7 @@ export default class Event {
           return
         }
         const _item = db.cur_item
+        db.played_merge = false
         Matter.Body.setStatic(db.cur_item, false)
         db.cur_item = null
         this.press_item = false
